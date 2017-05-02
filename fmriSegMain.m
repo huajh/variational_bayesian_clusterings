@@ -10,8 +10,11 @@
 %clc;
 clear;
 
+addpath('.\spm');
+
 brainpath = '.\20Normals_T1_brain\';
 segpath = '.\20Normals_T1_seg\';
+
 scan = '12_3';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -87,10 +90,11 @@ volume = reshape(fread(fbuchar,'uint8=>double'),256,256,[]); % fixed
     %
     %   change your cluster method here
     %   the cluster number is always equal to 3
-    K = 3; 
+    K = 3;     
+    tic;   
     segfunc_name = 'vbgmm';    
-    tic;              
-    [ label, model, logLRangle ] = segfunc( segfunc_name, interest',K);    
+    %[ label, model, logLRangle ] = segfunc( segfunc_name, interest',K);    
+    [label,model,logLRangle] = vbgmm(interest',K);
     toc;        
     clust_idx = zeros(cols*rows,1); % store cluster result here
     clust_idx(mask) = label;
@@ -108,7 +112,9 @@ volume = reshape(fread(fbuchar,'uint8=>double'),256,256,[]); % fixed
     seg_result(clust_idx == csf_gm_wm_idx(2),2) = 255;  % green(0,255,0)
     seg_result(clust_idx == csf_gm_wm_idx(3),3) = 255;  % blue (0,0,255)    
     final_seg = reshape(seg_result, [cols rows 3]);    
-    figure(4);imshow(final_seg); title(segfunc_name);
+    figure(4);imshow(final_seg); 
+    %title(segfunc_name);
+    title(segfunc_name);
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Jaccard similarity coefficient (JSC) or Tanimoto Similarity 

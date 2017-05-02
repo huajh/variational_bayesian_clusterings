@@ -8,6 +8,8 @@
 %clc;
 clear;
 
+addpath('.\spm');
+
 brainpath = '.\20Normals_T1_brain\';
 segpath = '.\20Normals_T1_seg\';
 scan = '12_3';
@@ -64,9 +66,18 @@ for i=1:t
     %
     %   change your cluster method here
     K = 3; % the cluster number is always equal to 3
-    segfunc_name = 'vblapsmm';
+    
     tic;
-    [ label, model, logL ] = segfunc( segfunc_name, interest',K);
+    
+    %%%%%%%%%%%%%%%
+    % change the segmentation function here
+    %%%%%%%%%%%%%%%
+    segfunc_name = 'vblapsmm';
+    %[ label, model, logL ] = segfunc( segfunc_name, interest',K);
+    option.p = 2;  % the number of nearest neighbors
+    option.lambda = 0.01;
+    [ label, model, logL ] = vblapsmm( interest',K, option);
+    
     iter(i) = size(logL,2);
     Run_Times(i) = toc;
     clust_idx = zeros(cols*rows,1);

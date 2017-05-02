@@ -51,7 +51,7 @@ function [label,model,logLRange] = vblapsmm(Data,K,option)
     logL = -realmax;
     model = Initvb(Data,K);
     model = MaxStep(Data,model,prior);
-    label = cell(N,1);
+   % label = cell(N,1);
     esp = 1e-4;
     t = 0;    
     while t < maxtimes
@@ -78,15 +78,15 @@ function [label,model,logLRange] = vblapsmm(Data,K,option)
             end            
         end
         logLRange(t) = logL;
-        [~,label0] = max(model.R,[],2);  
-        label{t} = label0;        
+        
+      %  label{t} = label0;        
         %fprintf('%e %e \n',abs(logL-logL0),esp*abs(logL));
         if abs(logL-logL0) < esp*abs(logL) || t >80 ||~flag
             break;
         end
         model = ExpectStep(Data,model);
     end
-    label = label(1:t);
+    [~,label] = max(model.R,[],2);  
     logLRange = logLRange(1:t);
     disp(['Total iteratons:',num2str(t)]);
 
